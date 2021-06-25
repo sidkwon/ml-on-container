@@ -13,36 +13,17 @@ Menu File > New > Terminal
 - Conda is a virtual environment manager, a software that allows you to create, removing or packaging virtual environments as well as installing software
 
 ```bash
-**sh-4.2$ bash**
-**(base) [ec2-user@ip-172-16-125-172 ~]$ conda env list**
+sh-4.2$ bash
+(base) [ec2-user@ip-172-16-125-172 ~]$ conda env list
 # conda environments:
 #
 base                  *  /home/ec2-user/anaconda3
-JupyterSystemEnv         /home/ec2-user/anaconda3/envs/JupyterSystemEnv
-R                        /home/ec2-user/anaconda3/envs/R
-amazonei_mxnet_p27       /home/ec2-user/anaconda3/envs/amazonei_mxnet_p27
-amazonei_mxnet_p36       /home/ec2-user/anaconda3/envs/amazonei_mxnet_p36
-amazonei_pytorch_latest_p36     /home/ec2-user/anaconda3/envs/amazonei_pytorch_latest_p36
-amazonei_tensorflow2_p27     /home/ec2-user/anaconda3/envs/amazonei_tensorflow2_p27
-amazonei_tensorflow2_p36     /home/ec2-user/anaconda3/envs/amazonei_tensorflow2_p36
-amazonei_tensorflow_p27     /home/ec2-user/anaconda3/envs/amazonei_tensorflow_p27
-amazonei_tensorflow_p36     /home/ec2-user/anaconda3/envs/amazonei_tensorflow_p36
-chainer_p27              /home/ec2-user/anaconda3/envs/chainer_p27
-chainer_p36              /home/ec2-user/anaconda3/envs/chainer_p36
-mxnet_latest_p37         /home/ec2-user/anaconda3/envs/mxnet_latest_p37
-mxnet_p27                /home/ec2-user/anaconda3/envs/mxnet_p27
-mxnet_p36                /home/ec2-user/anaconda3/envs/mxnet_p36
-python2                  /home/ec2-user/anaconda3/envs/python2
-python3                  /home/ec2-user/anaconda3/envs/python3
-pytorch_latest_p36       /home/ec2-user/anaconda3/envs/pytorch_latest_p36
-pytorch_p27              /home/ec2-user/anaconda3/envs/pytorch_p27
-pytorch_p36              /home/ec2-user/anaconda3/envs/pytorch_p36
-**tensorflow2_p36          /home/ec2-user/anaconda3/envs/tensorflow2_p36**
-tensorflow_p27           /home/ec2-user/anaconda3/envs/tensorflow_p27
-tensorflow_p36           /home/ec2-user/anaconda3/envs/tensorflow_p36
+...
+tensorflow2_p36          /home/ec2-user/anaconda3/envs/tensorflow2_p36
 
-(base) [ec2-user@ip-172-16-125-172 ~]$ **source activate tensorflow2_p36**
-(tensorflow2_p36) [ec2-user@ip-172-16-125-172 ~]$ **cd ~/SageMaker**
+(base) [ec2-user@ip-172-16-125-172 ~]$ source activate tensorflow2_p36
+
+(tensorflow2_p36) [ec2-user@ip-172-16-125-172 ~]$ cd ~/SageMaker
 ```
 
 ## git clone
@@ -168,6 +149,16 @@ $ docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model $AWS_A
 ```bash
 $ ls /tmp/tf-models/mnist
 ```
+<!-- blank line -->
+
+## Mission!!!
+- Dropout의 비율을 0.4에서 0.2로 수정 후 저장
+- New container image build (imagename: mfgboost-tf-training:0.2)
+- New container image를 tag한 후 ECR에 push
+
+<!-- blank line -->
+----
+<!-- blank line -->
 
 # 5. tensorflow docker container에서 추론 실행
 
@@ -179,7 +170,13 @@ $ docker run --rm -p 8501:8501 --name tf-serving-mnist --mount type=bind,source=
 
 ## 추론
 
-- **mnist_inference.ipynb**
+### mnist_inference.ipynb 참조
+### Mission!
+mnist_inference의 mnist_inference(100) 셀을 실행하면 다음과 같은 오류가 발생한다. 오류가 발생하는 이유를 생각해 보고 mnist_inference 함수를 수정해 보자. (hint: train.py를 참조한다)
+
+```bash
+{'error': 'input must be 4-dimensional[784]\n\t [[{{node sequential/conv2d/Relu}}]]'}
+```
 
 # Clean-up
 

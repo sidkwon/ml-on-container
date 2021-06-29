@@ -170,7 +170,7 @@ $ docker run --rm -p 8501:8501 --name tf-serving-mnist --mount type=bind,source=
 
 ## 추론
 
-### mnist_inference.ipynb 참조
+### fashion_mnist_inference.ipynb 참조
 ### Mission!
 mnist_inference.ipynb 파일의 mnist_inference(100) 셀을 실행하면 다음과 같은 오류가 발생한다. 오류가 발생하는 이유를 생각해 보고 mnist_inference 함수를 수정해 보자. (hint: train.py를 참조한다)
 

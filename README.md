@@ -1,4 +1,5 @@
-# AWS MFG Boost - ML on Container hands-on
+# AWS MFG Boost - ML on Container hands-on (Fashion MNIST)
+[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)
 
 # 1. 준비
 
@@ -70,7 +71,7 @@ $ export AWS_REGION=$(python -c 'import boto3; print(boto3.Session().region_name
 $ export RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
 ```
 
-## MNIST 분류 모델을 저장할 디렉터리 생성
+## Fashion MNIST 분류 모델을 저장할 디렉터리 생성
 
 ```bash
 $ mkdir -p /tmp/tf-models

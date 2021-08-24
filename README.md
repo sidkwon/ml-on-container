@@ -30,22 +30,22 @@ tensorflow2_p36          /home/ec2-user/anaconda3/envs/tensorflow2_p36
 ## git clone
 
 ```bash
-$ git clone https://github.com/sidkwon/ml-on-container.git
-$ cd ml-on-container
+git clone https://github.com/sidkwon/ml-on-container.git
+cd ml-on-container
 ```
 
 # 2. 로컬에서 train.py 실행
 
 ```bash
-$ sudo mkdir -p /opt/ml/model
-$ sudo chown ec2-user:ec2-user -R /opt/ml/model
-$ python train.py
+sudo mkdir -p /opt/ml/model
+sudo chown ec2-user:ec2-user -R /opt/ml/model
+python train.py
 ```
 
 # 3. tensorflow docker container 실행
 
 ```bash
-$ docker run -it --rm tensorflow/tensorflow bash
+docker run -it --rm tensorflow/tensorflow bash
 
 (Container안에서 아래 명령어 수행)
 root@1382004b5a16:/# python -c "import tensorflow as tf;print(tf.__version__)"
@@ -66,33 +66,33 @@ root@1382004b5a16:/# exit
 
 ```bash
 # Variables
-$ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity | jq -r ".Account")
-$ export AWS_REGION=$(python -c 'import boto3; print(boto3.Session().region_name)')
-$ export RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity | jq -r ".Account")
+export AWS_REGION=$(python -c 'import boto3; print(boto3.Session().region_name)')
+export RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
 ```
 
 ## Fashion MNIST 분류 모델을 저장할 디렉터리 생성
 
 ```bash
-$ mkdir -p /tmp/tf-models
+mkdir -p /tmp/tf-models
 ```
 
 ## 컨테이너 이미지 빌드
 
 ```bash
-$ docker build --tag mfgboost-tf-training:0.1 . --file Dockerfile
+docker build --tag mfgboost-tf-training:0.1 . --file Dockerfile
 ```
 
 ## 컨테이너 이미지 확인
 
 ```bash
-$ docker images
+docker images
 ```
 
 ## 컨테이너 실행
 
 ```bash
-$ docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model mfgboost-tf-training:0.1
+docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model mfgboost-tf-training:0.1
 
 $ ls -lat /tmp/tf-models
 ```
@@ -100,55 +100,55 @@ $ ls -lat /tmp/tf-models
 ## 컨테이너 이미지를 저장할 ECR(Elastic Container Registry) 생성
 
 ```bash
-$ aws ecr create-repository --repository-name mfgboost-train-$RANDOM_STRING
+aws ecr create-repository --repository-name mfgboost-train-$RANDOM_STRING
 ```
 
 ## 컨테이너 이미지를 ECR에 push
 
 ```bash
 # Authrization
-$ aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
 # Tagging
-$ docker tag mfgboost-tf-training:0.1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
+docker tag mfgboost-tf-training:0.1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
 
 # Verify
 $ docker images
 
 # Push
-$ docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
+docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
 
 # Verify
-$ aws ecr list-images --repository-name mfgboost-train-$RANDOM_STRING
+aws ecr list-images --repository-name mfgboost-train-$RANDOM_STRING
 ```
 
 ## 로컬 컨테이너, 컨테이너 이미지, 모델 모두 삭제
 
 ```bash
 # Remove all containers
-$ docker rm $(docker ps -a -q)
+docker rm $(docker ps -a -q)
 
 # Remove all images
-$ docker rmi -f $(docker images -a -q)
+docker rmi -f $(docker images -a -q)
 
 # Delete model
-$ sudo rm -rf /tmp/tf-models/*
+sudo rm -rf /tmp/tf-models/*
 
 # Verify
-$ docker ps -a
-$ docker images
+docker ps -a
+docker images
 ```
 
 ## ECR에 저장된 컨테이너 이미지를 pull 하여 학습
 
 ```bash
-$ docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
+docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
 ```
 
 ## 학습 후 모델 확인
 
 ```bash
-$ ls /tmp/tf-models/mnist
+ls /tmp/tf-models/mnist
 ```
 <!-- blank line -->
 
@@ -166,7 +166,7 @@ $ ls /tmp/tf-models/mnist
 ## TF Serving 컨테이너 실행
 
 ```bash
-$ docker run --rm -p 8501:8501 --name tf-serving-mnist --mount type=bind,source=/tmp/tf-models/mnist,target=/models/mnist -e MODEL_NAME=mnist tensorflow/serving
+docker run --rm -p 8501:8501 --name tf-serving-mnist --mount type=bind,source=/tmp/tf-models/mnist,target=/models/mnist -e MODEL_NAME=mnist tensorflow/serving
 ```
 
 ## 추론
@@ -183,11 +183,11 @@ fashion_mnist_inference.ipynb 파일의 fashion_mnist_inference(100) 셀을 실�
 
 ```bash
 # Remove all containers
-$ docker rm $(docker ps -a -q)
+docker rm $(docker ps -a -q)
 
 # Remove all images
-$ docker rmi -f $(docker images -a -q)
+docker rmi -f $(docker images -a -q)
 
 # Remove ECR repository
-$ aws ecr delete-repository --repository-name mfgboost-train-$RANDOM_STRING
+aws ecr delete-repository --repository-name mfgboost-train-$RANDOM_STRING
 ```

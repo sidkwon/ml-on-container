@@ -8,6 +8,7 @@
 ### Open Terminal
 
 Menu File > New > Terminal
+![](image/open-terminal.png)
 
 ### Activate **`tensorflow2_p36`** conda environment
 

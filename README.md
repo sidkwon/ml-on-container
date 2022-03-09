@@ -47,7 +47,7 @@ python train.py
 ```bash
 docker run -it --rm tensorflow/tensorflow bash
 
-(Container안에서 아래 명령어 수행)
+(Container안에서 아래 명령어 (python -c "import tensorflow as tf;print(tf.__version__)") 수행)
 root@1382004b5a16:/# python -c "import tensorflow as tf;print(tf.__version__)"
 2.5.0
 
@@ -89,7 +89,7 @@ docker build --tag mfgboost-tf-training:0.1 . --file Dockerfile
 docker images
 ```
 
-## 컨테이너 실행
+## 컨테이너 실행 후 Jupyter notebook의 /tmp/tf-models에 모델 파일이 저장되었는지 확인
 
 ```bash
 docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model mfgboost-tf-training:0.1
@@ -97,7 +97,7 @@ docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model mfgboost
 $ ls -lat /tmp/tf-models
 ```
 
-## 컨테이너 이미지를 저장할 ECR(Elastic Container Registry) 생성
+## 컨테이너 이미지를 저장할 Amazon ECR(Elastic Container Registry) 생성
 
 ```bash
 aws ecr create-repository --repository-name mfgboost-train-$RANDOM_STRING
@@ -122,7 +122,7 @@ docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RA
 aws ecr list-images --repository-name mfgboost-train-$RANDOM_STRING
 ```
 
-## 로컬 컨테이너, 컨테이너 이미지, 모델 모두 삭제
+## Jupyter notebook에서 로컬 컨테이너, 컨테이너 이미지, 모델 모두 삭제
 
 ```bash
 # Remove all containers

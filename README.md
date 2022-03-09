@@ -21,9 +21,9 @@ sh-4.2$ bash
 #
 base                  *  /home/ec2-user/anaconda3
 ...
-tensorflow2_p36          /home/ec2-user/anaconda3/envs/tensorflow2_p36
+tensorflow2_p36          /home/ec2-user/anaconda3/envs/tensorflow2_p37
 
-(base) [ec2-user@ip-172-16-125-172 ~]$ source activate tensorflow2_p36
+(base) [ec2-user@ip-172-16-125-172 ~]$ conda activate tensorflow2_p37
 
 (tensorflow2_p36) [ec2-user@ip-172-16-125-172 ~]$ cd ~/SageMaker
 ```
@@ -95,7 +95,7 @@ docker images
 ```bash
 docker run --mount type=bind,source=/tmp/tf-models,target=/opt/ml/model mfgboost-tf-training:0.1
 
-$ ls -lat /tmp/tf-models
+ls -lat /tmp/tf-models
 ```
 
 ## 컨테이너 이미지를 저장할 Amazon ECR(Elastic Container Registry) 생성
@@ -114,7 +114,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 docker tag mfgboost-tf-training:0.1 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
 
 # Verify
-$ docker images
+docker images
 
 # Push
 docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/mfgboost-train-$RANDOM_STRING:0.1
@@ -157,6 +157,7 @@ ls /tmp/tf-models/mnist
 - Dropout의 비율을 0.4에서 0.2로 수정 후 저장
 - New container image build (imagename: mfgboost-tf-training:0.2)
 - New container image를 tag한 후 ECR에 push
+- New container image를 이용하여 학습
 
 <!-- blank line -->
 ----
@@ -172,9 +173,11 @@ docker run --rm -p 8501:8501 --name tf-serving-mnist --mount type=bind,source=/t
 
 ## 추론
 
-### fashion_mnist_inference.ipynb 참조
+### fashion_mnist_inference.ipynb 실행
+kernel은 `conda_tensorflow2_p37` 을 선택한다.
+
 ### Mission!
-fashion_mnist_inference.ipynb 파일의 fashion_mnist_inference(100) 셀을 실행하면 다음과 같은 오류가 발생한다. 오류가 발생하는 이유를 생각해 보고 fashion_mnist_inference 함수를 수정해 보자. (hint: train.py를 참조한다)
+fashion_mnist_inference.ipynb 파일의 fashion_mnist_inference(100) 셀을 실행하면 다음과 같은 오류가 발생한다. 오류가 발생하는 이유를 생각해 보고 fashion_mnist_inference 함수를 수정해 보자. (hint: train.py와 TF Serving이 실행되고 있는 터미널의 로그를 참조한다)
 
 ```bash
 {'error': 'input must be 4-dimensional[784]\n\t [[{{node sequential/conv2d/Relu}}]]'}
@@ -183,12 +186,15 @@ fashion_mnist_inference.ipynb 파일의 fashion_mnist_inference(100) 셀을 실�
 # Clean-up
 
 ```bash
-# Remove all containers
-docker rm $(docker ps -a -q)
+# Stop ALL running containers including TF Serving container
+# TF Serving container가 실행 중인 터미널이 아닌 별도 터미널을 열고 실행
+docker kill $(docker ps -q)
 
 # Remove all images
+# TF Serving container가 실행 중인 터미널에서 실행
 docker rmi -f $(docker images -a -q)
 
 # Remove ECR repository
-aws ecr delete-repository --repository-name mfgboost-train-$RANDOM_STRING
+# TF Serving container가 실행 중인 터미널에서 실행
+aws ecr delete-repository --repository-name mfgboost-train-$RANDOM_STRING --force
 ```
